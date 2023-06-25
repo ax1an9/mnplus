@@ -39,6 +39,7 @@ class MininetRest(Bottle):
         return {'switches': [s.name for s in self.net.switches]}
 
     def get_links(self):
-        return {'links': [dict(name=l.intf1.node.name + '-' + l.intf2.node.name,
+        return {'nodes': [n for n in self.net],
+                'links': [dict(name=l.intf1.node.name + '-' + l.intf2.node.name,
                                node1=l.intf1.node.name, node2=l.intf2.node.name,
                                intf1=l.intf1.name, intf2=l.intf2.name) for l in self.net.links]}
