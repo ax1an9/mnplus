@@ -1,19 +1,54 @@
 import utils.computepowertool as cpt
 from utils.hostinfohelper import parse_ifconfig
+from utils.swiinfohelper import parse_swi_interface_stat
+import time
+from subprocess import Popen, PIPE
 class Netview:
     def __init__(self, net):
         self.net = net
         self.net_topo={}
         self.version=0
+        # view的组成信息
         self.switches={}
         self.ports={}
         self.hosts={}
         self.links={}
         self.associations={} 
 
+
+    def get_swi_interface_info(self,interface_name):
+        """
+        获取对应swtich网卡的详细信息
+        解析后结果格式：
+        {
+            "collisions": 0,
+            "rx_bytes": 90,
+            "rx_crc_err": 0,
+            "rx_dropped": 0,
+            "rx_errors": 0,
+            "rx_frame_err": 0,
+            "rx_missed_errors": 0,
+            "rx_over_err": 0,
+            "rx_packets": 1,
+            "tx_bytes": 176,
+            "tx_dropped": 0,
+            "tx_errors": 0,
+            "tx_packets": 2
+        }
+        """
+        cmd = ['ovs-vsctl', 'list', 'interface', interface_name]
+        p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+        stdout, stderr = p.communicate()
+        if p.returncode != 0:
+            print("Error executing ovs-vsctl command: %s" % stderr.decode())
+            return None
+        else:
+            return parse_swi_interface_stat(stdout.decode())
+
+
     def get_host_interfaceinfo(self,host_name,interface_name):
         """
-        获取某节点的某个网卡的丢包率信息
+        获取某host节点的某个网卡的丢包率信息
         """
         host=self.net[host_name]
         output = host.cmd('ifconfig',interface_name)
@@ -28,8 +63,8 @@ class Netview:
         tx_diff =net_info['TX packets'] -pre_net_info['TX packets']
         tx_err_diff =net_info['TX errors'] -pre_net_info['TX errors']
         res={
-            'rx_loss_rate':rx_err_diff / (rx_diff + rx_err_diff),
-            'tx_loss_rate' : tx_err_diff / (tx_diff + tx_err_diff)
+            'rx_loss_rate': 0.0 if (rx_diff + rx_err_diff)==0 else rx_err_diff / (rx_diff + rx_err_diff),
+            'tx_loss_rate' : 0.0 if (tx_diff + tx_err_diff)==0 else  tx_err_diff / (tx_diff + tx_err_diff)
         }
         # update pre
         pre_net_info=host.params['net_info']=net_info
@@ -53,13 +88,45 @@ class Netview:
 
         return cpt.result2vview(res,constraints)
 
-    def host_info_cpu_update(self):
-        for h in self.hosts.value():
+    def host_info_update(self):
+        """
+        更新view中的所有虚拟host的信息:算力+网络
+        """
+        for h in self.hosts.values():
             host_name=h['hostname']
             compute_power_info=self.get_compute_power(host_name)
             h['compute_power_info']=compute_power_info
-            
+            intfNames=self.net[host_name].intfNames()
+            for intfN in intfNames:
+                interfaceinfo=self.get_host_interfaceinfo(host_name,intfN)
+                if 'interfaceinfo' not in h:
+                    h['interfaceinfo']={}
+                h['interfaceinfo'][intfN]={"intfName":intfN,"info":interfaceinfo}
         return 
+    
+    def swi_info_compute_power_update(self):
+        """
+        更新view中的所有switch的网络信息
+        """
+        for s in self.switches.values():
+            swi_name=s['hostname']
+            intfNames=self.net[swi_name].intfNames()
+            for intfN in intfNames:
+                if intfN == 'lo':
+                    continue
+                interface_info=self.get_swi_interface_info(intfN)
+                if 'interfaceinfo' not in s:
+                    s['interfaceinfo']={}
+                s['interfaceinfo'][intfN]={"intfName":intfN,"info":interface_info}
+
+
+    def all_update(self):
+        """
+        视图更新
+        """
+        self.host_info_update()
+        self.swi_info_compute_power_update()
+        self.wirte_topo()
 
     def wirte_topo(self):
         self.net_topo={}
@@ -79,17 +146,7 @@ class Netview:
         for s in self.associations.values():
             self.net_topo['items'].append(s)
         # new
-        
         return self.net_topo
-    def parse_ifconfig(self):
-        # RX packets         ：接受到的总包数
-        # RX bytes             ：接受到的总字节数
-        # RX errors            ：接收时，产生错误的数据包数
-        # RX dropped        ：接收时，丢弃的数据包数
-        # RX overruns       ：接收时，由于速度过快而丢失的数据包数
-        # RX frame (框架)  ：接收时，发生frame错误而丢失的数据包数
-        
-        return 
 
     def get_topo(self):
         return self.net_topo
