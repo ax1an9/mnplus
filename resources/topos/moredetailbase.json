@@ -1,0 +1,121 @@
+{
+    "projectName": "Mininet network - Medium with 1 controller",
+    "startScript": "# Ping between all hosts.\npingall\n",
+    "version": 0,
+    "items": [
+        {
+            "id": "e90104bc-cbb7-4587-8b22-caba2e538d51",
+            "type": "host",
+            "hostname": "h1",
+            "cpuLimit": 0.1,
+            "cpuScheduler": "cfs",
+            "x": -194,
+            "y": 111
+        },
+        {
+            "id": "d4e7de4b-c817-4e83-a205-fa027fd5738e",
+            "hostname": "eth0",
+            "type": "port",
+            "x": -148,
+            "y": 49
+        },
+        {
+            "id": "9e37a376-3775-400c-8c81-c059450913bb",
+            "type": "association",
+            "from": "e90104bc-cbb7-4587-8b22-caba2e538d51",
+            "to": "d4e7de4b-c817-4e83-a205-fa027fd5738e"
+        },
+        {
+            "id": "16a87732-e075-400f-8816-f8de5c614319",
+            "type": "host",
+            "hostname": "h2",
+            "cpuLimit": 0.2,
+            "cpuScheduler": "cfs",
+            "x": 65,
+            "y": 115
+        },
+        {
+            "id": "0cb9a70c-d994-4f04-b23e-8fad56836b52",
+            "hostname": "eth0",
+            "type": "port",
+            "x": 32,
+            "y": 50
+        },
+        {
+            "id": "478aa9f2-f23e-4fcc-ab44-fed0f201de4c",
+            "type": "association",
+            "from": "16a87732-e075-400f-8816-f8de5c614319",
+            "to": "0cb9a70c-d994-4f04-b23e-8fad56836b52"
+        },
+        {
+            "id": "8084730f-a761-4907-8f30-b5ef67d37778",
+            "type": "switch",
+            "hostname": "s1",
+            "switchType": "OVSSwitch",
+            "protocol": "OpenFlow15",
+            "x": -65,
+            "y": -72
+        },
+        {
+            "id": "eb22f86d-6161-4390-bec4-556502c7548e",
+            "hostname": "eth0",
+            "type": "port",
+            "x": -190,
+            "y": -3
+        },
+        {
+            "id": "072e15c3-e31a-41f1-bb51-ea12fab1f74d",
+            "type": "association",
+            "from": "8084730f-a761-4907-8f30-b5ef67d37778",
+            "to": "eb22f86d-6161-4390-bec4-556502c7548e"
+        },
+        {
+            "id": "a998b381-1618-4fa1-a8f4-66cec5944803",
+            "hostname": "eth1",
+            "type": "port",
+            "x": 75,
+            "y": -8
+        },
+        {
+            "id": "245e619a-fc0c-4697-bdcf-c19106a16b69",
+            "type": "association",
+            "from": "8084730f-a761-4907-8f30-b5ef67d37778",
+            "to": "a998b381-1618-4fa1-a8f4-66cec5944803"
+        },
+        {
+            "id": "9cf9dc91-3d03-4e23-845d-00b4d5317055",
+            "type": "link",
+            "hostname": "",
+            "bandwidth": 10,
+            "delay": "10ms",
+            "loss": 5,
+            "from": "d4e7de4b-c817-4e83-a205-fa027fd5738e",
+            "to": "eb22f86d-6161-4390-bec4-556502c7548e"
+        },
+        {
+            "id": "7021d3e2-2393-4e62-9902-79b42736fb5a",
+            "type": "link",
+            "hostname": "",
+            "bandwidth": 10,
+            "delay": "10ms",
+            "loss": 5,
+            "from": "0cb9a70c-d994-4f04-b23e-8fad56836b52",
+            "to": "a998b381-1618-4fa1-a8f4-66cec5944803"
+        },
+        {
+            "id": "ef399dc7-d2e3-4433-8b5a-fbb1a0978b32",
+            "type": "controller",
+            "hostname": "c1",
+            "controllerType": "Ryu",
+            "x": -66,
+            "y": -191
+        },
+        {
+            "id": "d3b9bd60-15db-4067-8192-aad75629e494",
+            "type": "association",
+            "hostname": "",
+            "from": "ef399dc7-d2e3-4433-8b5a-fbb1a0978b32",
+            "to": "8084730f-a761-4907-8f30-b5ef67d37778"
+        }
+    ]
+}

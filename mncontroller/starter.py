@@ -30,7 +30,9 @@ net = Mininet(controller=RemoteController, switch=OVSKernelSwitch)
 c0 = net.addController('c0', controller=RemoteController,
                         ip='127.0.0.1', port=6653)
 # 打开文件并读取 init topo JSON 数据
-with open('./resources/topos/basetopo.json', 'r') as file:
+# /home/test/Desktop/mySDNnetwork/dev/resources/topos/moredetailbase.json
+# /resources/topos/basetopo.json
+with open('./resources/topos/moredetailbase.json', 'r') as file:
     data = json.load(file)
 nparser=network_parser(net)
 nparser.parse(data)

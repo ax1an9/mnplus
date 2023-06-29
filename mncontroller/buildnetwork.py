@@ -1,4 +1,5 @@
 import utils.uuidtools as uuidtool
+from mininet.link import TCLink
 from mininet.node import Controller, RemoteController, OVSKernelSwitch, CPULimitedHost
 of_proto='OpenFlow15'
 class network_parser:
@@ -29,12 +30,13 @@ class network_parser:
                     self.switches[ass['from']]['ports']=[]
                 self.switches[ass['from']]['ports'].append(ass['to'])
                 self.ports[ass['to']]['mastertype']='switch'
+                self.ports[ass['to']]['masterid']=ass['from']
             elif ass['from'] in self.hosts:
                 if 'ports' not in self.hosts[ass['from']]:
                     self.hosts[ass['from']]['ports']=[]
                 self.hosts[ass['from']]['ports'].append(ass['to'])
                 self.ports[ass['to']]['mastertype']='host'
-            self.ports[ass['to']]['masterid']=ass['from']
+                self.ports[ass['to']]['masterid']=ass['from']
         # 构建swi
         for swi in self.switches.values():
             added=self.net.addSwitch(swi['hostname'],protocols=of_proto, nodeID=swi['id'])
@@ -55,10 +57,17 @@ class network_parser:
                            else self.switches[self.ports[l['to']]['masterid']]['hostname'])
             node1=self.net[n1]
             node2=self.net[n2]
+            _bandwidth=l["bandwidth"] if "bandwidth" in l else None
+            _delay=l['delay'] if 'delay' in l else None
+            _loss=l['loss'] if 'loss' in l else None
             added=self.net.addLink(node1, node2,
                                    intfName1=n1+'-'+self.ports[l['from']]['hostname'],
-                                   intfName2=n2+'-'+self.ports[l['to']]['hostname'])
-            added.uuid=l['id']
+                                   intfName2=n2+'-'+self.ports[l['to']]['hostname'],
+                                     cls=TCLink, bw=_bandwidth, delay=_delay, loss=_loss,linkID=l['id'])
+            # added=self.net.addLink(node1, node2,
+            #                        intfName1=n1+'-'+self.ports[l['from']]['hostname'],
+            #                        intfName2=n2+'-'+self.ports[l['to']]['hostname'])
+            # added.uuid=l['id']
 
         
 
