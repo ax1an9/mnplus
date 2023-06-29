@@ -1,0 +1,29 @@
+# Python-related files
+*.pyc
+*.pyo
+__pycache__/
+
+# IDE-related files
+.vscode/
+*.idea/
+
+# Compiled files
+*.o
+*.a
+*.so
+
+# Dependency directories
+venv/
+env/
+env.bak/
+
+# Build and distribution artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Miscellaneous
+*.log
+*.swp
+.DS_Store
