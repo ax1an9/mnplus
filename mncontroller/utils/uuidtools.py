@@ -15,6 +15,6 @@ def gen_uuid():
     # 生成基于时间戳和MAC地址的UUID
     uuid1 = uuid.uuid1()
     logger.info('gen uuid:%s', uuid1)
-    return uuid1
+    return str(uuid1)
 
  
