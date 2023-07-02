@@ -3,17 +3,22 @@ from bottle import route, run, template, error
 import time
 
 class MininetRest(Bottle):
-    def __init__(self, net):
+    def __init__(self, net,netview):
         super(MininetRest, self).__init__()
         self.net = net # mininet
+        self.netview = netview # mininet
         # routes
         self.route('/nodes', callback=self.get_nodes)
+        self.route('/topos', callback=self.get_topos)
         self.route('/nodes/<node_name>', callback=self.get_node)
         self.route('/nodes/<node_name>', method='POST', callback=self.post_node)
         self.route('/hosts', method='GET', callback=self.get_hosts)
         self.route('/switches', method='GET', callback=self.get_switches)
         self.route('/links', method='GET', callback=self.get_links)
         self.route('/addnode/<node_name>', callback=self.add_node)
+
+    def get_topos(self):
+        return self.netview.get_topo()
 
     def add_node(self, node_name):
         h1 = self.net.addHost(node_name)

@@ -3,6 +3,7 @@ from utils.hostinfohelper import parse_ifconfig
 from utils.swiinfohelper import parse_swi_interface_stat
 import time
 from subprocess import Popen, PIPE
+import threading
 class Netview:
     def __init__(self, net):
         self.net = net
@@ -14,6 +15,7 @@ class Netview:
         self.hosts={}
         self.links={}
         self.associations={} 
+        self.view_lock=threading.Lock()
 
 
     def get_swi_interface_info(self,interface_name):
@@ -129,27 +131,37 @@ class Netview:
         self.wirte_topo()
 
     def wirte_topo(self):
-        self.net_topo={}
-        self.version+=1
-        self.net_topo['version']=self.version
-        self.net_topo['items']=[]
-        # todo: 添加实时的网卡信息、cpu占用、mem
-        # 可能需要额外的dpid
-        for s in self.switches.values():
-            self.net_topo['items'].append(s)
-        for s in self.ports.values():
-            self.net_topo['items'].append(s)
-        for s in self.hosts.values():
-            self.net_topo['items'].append(s)
-        for s in self.links.values():
-            self.net_topo['items'].append(s)
-        for s in self.associations.values():
-            self.net_topo['items'].append(s)
-        # new
-        return self.net_topo
+        self.view_lock.acquire()
+        try:
+            self.net_topo={}
+            self.version+=1
+            self.net_topo['version']=self.version
+            self.net_topo['items']=[]
+            # todo: 添加实时的网卡信息、cpu占用、mem
+            # 可能需要额外的dpid
+            for s in self.switches.values():
+                self.net_topo['items'].append(s)
+            for s in self.ports.values():
+                self.net_topo['items'].append(s)
+            for s in self.hosts.values():
+                self.net_topo['items'].append(s)
+            for s in self.links.values():
+                self.net_topo['items'].append(s)
+            for s in self.associations.values():
+                self.net_topo['items'].append(s)
+            # new
+            return self.net_topo
+        finally:
+            self.view_lock.release()
+        
 
     def get_topo(self):
-        return self.net_topo
+        self.view_lock.acquire()
+        try:
+            ret=self.net_topo
+            return ret
+        finally:
+            self.view_lock.release()
         # switches=[s for s in self.net.switches]
         # hosts=[h for h in self.net.hosts]
         # links=[l for l in self.net.links]

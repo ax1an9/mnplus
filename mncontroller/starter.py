@@ -13,6 +13,7 @@ import os
 from netview import Netview
 from buildnetwork import network_parser
 import json
+from updateviewtask import ViewUpdater
 
 def update_switch_params(swi):
     swi.params["uuid"]=swi.uuid
@@ -36,30 +37,32 @@ with open('./resources/topos/moredetailbase.json', 'r') as file:
     data = json.load(file)
 nparser=network_parser(net)
 nparser.parse(data)
-# start net
-net.start()
-# use MininetRest as server
-mininet_rest = MininetRest(net)
 nv=Netview(net)
 nv.switches=nparser.switches
 nv.ports=nparser.ports
 nv.hosts=nparser.hosts
 nv.links=nparser.links
 nv.associations=nparser.associations
+# start net
+net.start()
+# use MininetRest as server
+mininet_rest = MininetRest(net,nv)
+update_task=ViewUpdater(nv)
 print("mininet_rest.get_links():")
 print(mininet_rest.get_links())
-while input():
-    nv.all_update()
-    print(nv.get_topo())
-# print(nv.get_compute_power("h1"))
-# print(r'print(nv.get_host_interfaceinfo("h1","h1-haha"))')
-# print(nv.get_host_interfaceinfo("h1","h1-haha"))
-# links
-print("mininet_rest.get_links():")
-print(mininet_rest.get_links())
+# while input():
+#     nv.all_update()
+#     print(nv.get_topo())
+# # print(nv.get_compute_power("h1"))
+# # print(r'print(nv.get_host_interfaceinfo("h1","h1-haha"))')
+# # print(nv.get_host_interfaceinfo("h1","h1-haha"))
+# # links
+# print("mininet_rest.get_links():")
+# print(mininet_rest.get_links())
 
-
+update_task.start()
 # start server
 mininet_rest.run()
+update_task.stop()
 # stop server
 net.stop()
