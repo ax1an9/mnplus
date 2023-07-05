@@ -15,13 +15,6 @@ from buildnetwork import network_parser
 import json
 from updateviewtask import ViewUpdater
 
-def update_switch_params(swi):
-    swi.params["uuid"]=swi.uuid
-    swi.params["type"]=swi.switch
-    swi.params["uuid"]=swi.uuid
-    swi.params["uuid"]=swi.uuid
-    swi.params["uuid"]=swi.uuid
-
 # specify the openflow version
 of_proto='OpenFlow15'
 mn_pid = os.getpid()
@@ -50,15 +43,9 @@ mininet_rest = MininetRest(net,nv)
 update_task=ViewUpdater(nv)
 print("mininet_rest.get_links():")
 print(mininet_rest.get_links())
-# while input():
-#     nv.all_update()
-#     print(nv.get_topo())
-# # print(nv.get_compute_power("h1"))
-# # print(r'print(nv.get_host_interfaceinfo("h1","h1-haha"))')
-# # print(nv.get_host_interfaceinfo("h1","h1-haha"))
-# # links
-# print("mininet_rest.get_links():")
-# print(mininet_rest.get_links())
+print("get node:")
+print('haha' in net.hosts)
+
 
 update_task.start()
 # start server

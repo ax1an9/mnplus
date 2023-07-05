@@ -17,6 +17,12 @@ class Netview:
         self.associations={} 
         self.view_lock=threading.Lock()
 
+    def updatehosts(self,uuid,item):
+        self.view_lock.acquire()
+        try:
+            self.hosts[uuid]=item
+        finally:
+            self.view_lock.release()
 
     def get_swi_interface_info(self,interface_name):
         """
@@ -126,33 +132,36 @@ class Netview:
         """
         视图更新
         """
-        self.host_info_update()
-        self.swi_info_compute_power_update()
-        self.wirte_topo()
-
-    def wirte_topo(self):
         self.view_lock.acquire()
         try:
-            self.net_topo={}
-            self.version+=1
-            self.net_topo['version']=self.version
-            self.net_topo['items']=[]
-            # todo: 添加实时的网卡信息、cpu占用、mem
-            # 可能需要额外的dpid
-            for s in self.switches.values():
-                self.net_topo['items'].append(s)
-            for s in self.ports.values():
-                self.net_topo['items'].append(s)
-            for s in self.hosts.values():
-                self.net_topo['items'].append(s)
-            for s in self.links.values():
-                self.net_topo['items'].append(s)
-            for s in self.associations.values():
-                self.net_topo['items'].append(s)
-            # new
-            return self.net_topo
+            self.host_info_update()
+            self.swi_info_compute_power_update()
+            self.wirte_topo()
         finally:
             self.view_lock.release()
+        
+
+    def wirte_topo(self):
+
+        self.net_topo={}
+        self.version+=1
+        self.net_topo['version']=self.version
+        self.net_topo['items']=[]
+        # todo: 添加实时的网卡信息、cpu占用、mem
+        # 可能需要额外的dpid
+        for s in self.switches.values():
+            self.net_topo['items'].append(s)
+        for s in self.ports.values():
+            self.net_topo['items'].append(s)
+        for s in self.hosts.values():
+            self.net_topo['items'].append(s)
+        for s in self.links.values():
+            self.net_topo['items'].append(s)
+        for s in self.associations.values():
+            self.net_topo['items'].append(s)
+        # new
+        return self.net_topo
+        
         
 
     def get_topo(self):
