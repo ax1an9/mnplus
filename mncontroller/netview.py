@@ -18,6 +18,9 @@ class Netview:
         self.view_lock=threading.Lock()
 
     def updatehosts(self,uuid,item):
+        """
+        添加新的host，更新网络视图信息
+        """
         self.view_lock.acquire()
         try:
             self.hosts[uuid]=item
@@ -142,7 +145,9 @@ class Netview:
         
 
     def wirte_topo(self):
-
+        """
+        写入视图
+        """
         self.net_topo={}
         self.version+=1
         self.net_topo['version']=self.version
@@ -165,27 +170,13 @@ class Netview:
         
 
     def get_topo(self):
+        """
+        获取网络视图
+        """
         self.view_lock.acquire()
         try:
             ret=self.net_topo
             return ret
         finally:
             self.view_lock.release()
-        # switches=[s for s in self.net.switches]
-        # hosts=[h for h in self.net.hosts]
-        # links=[l for l in self.net.links]
-        # to_update={}
-        # version=self.version+1
-        # to_update["version"]=version
-        # items=[]
-        # for s in switches:
-        #     s_view={
-        #         "id":s.uuid,
-        #         "type":"switch",
-        #         "hostname":s.name,
-        #         "switchType":"",
-        #         "dpid":s.dpid
-        #     }
-        #     items.append(s_view)
-        # for h in hosts:
     

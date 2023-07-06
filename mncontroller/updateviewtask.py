@@ -9,6 +9,9 @@ class ViewUpdater(threading.Thread):
         self._stop_event = threading.Event()
 
     def run(self):
+        """
+        更新任务
+        """
         while not self._stop_event.is_set():
             print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()),"update net top view...")
             self.task()
@@ -18,11 +21,4 @@ class ViewUpdater(threading.Thread):
         self._stop_event.set()
     def task(self):
         self.netview.all_update()
-
-# # 创建线程
-# t = ViewUpdater()
-# # 启动线程
-# t.start()
-
-# t.stop()
 
