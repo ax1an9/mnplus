@@ -11,6 +11,9 @@ class network_parser:
         self.links={}
         self.associations={} 
     def parse(self,network_desc):
+        """
+        解析网络描述数据结构，构建mininet网络。
+        """
         for item in network_desc["items"]:
             if item["type"] == "switch":
                 self.switches[item["id"]]=item

@@ -1,6 +1,8 @@
 import re
 def parse_swi_interface_stat(interface_info):
     """
+    解析从switch接口获取的信息。
+    返回：解析结果
     解析后结果格式：
     {
         "collisions": 0,

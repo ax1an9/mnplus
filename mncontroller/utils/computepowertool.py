@@ -3,7 +3,7 @@ import psutil
 
 def get_process_info(pid):
     """
-    定义函数获取进程及其子进程的CPU和内存使用情况
+    获取进程及其子进程的CPU和内存使用情况
     返回实例：
     'pid': pid, 
     'cpu_percent': 百分数 like 99.8 代表 99.8%,
@@ -36,6 +36,13 @@ def result2vview(result,constraints):
     将结果转为类似一个虚拟计算机节点的算力视图.
     :param result: 实时获取的结果
     :param constraints: 节点自带的资源限制
+    返回：虚拟计算机节点的算力视图
+    like：
+    {
+                "mem_usage_rate": 0.02752685546875,
+                "cpu_usage_rate": 0.0880859375
+            }
+
     """
     cnt=psutil.cpu_count()
     tot_used_cpu_percent=result['cpu_percent']

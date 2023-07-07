@@ -30,6 +30,7 @@ class Netview:
     def get_swi_interface_info(self,interface_name):
         """
         获取对应swtich网卡的详细信息
+        返回：解析后结果格式
         解析后结果格式：
         {
             "collisions": 0,
@@ -60,6 +61,7 @@ class Netview:
     def get_host_interfaceinfo(self,host_name,interface_name):
         """
         获取某host节点的某个网卡的丢包率信息
+        返回：某host节点的某个网卡的丢包率信息
         """
         host=self.net[host_name]
         output = host.cmd('ifconfig',interface_name)
@@ -84,6 +86,7 @@ class Netview:
     def get_compute_power(self,host_name):
         """
         获取节点的算力信息
+        返回:节点算力负载信息
         模板结果：
         {'mem_usage_rate': 0.027618408203125,
         'cpu_usage_rate': 0.1767578125}
