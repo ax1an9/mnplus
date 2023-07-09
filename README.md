@@ -1,4 +1,6 @@
 # mysdn project
+This project is based on [mininet](https://github.com/mininet/mininet).
+
 
 本项目是基于mininet的网络仿真平台，提供便捷的拓扑导入功能，同时可以方便地进行资源监控以及网络监控。
 
